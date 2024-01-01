@@ -1,0 +1,172 @@
+///precedence of operator in c and c++
+/*
+1. (){}[]
+2. ^ (R-L)
+3. * / (L-R)
+
+4. + - (L-R)
+
+*/ 
+
+///rules for infix to postfix
+
+/*
+
+this operatin will happen from left to right
+
+1. print the operand as they arrive
+2. if the stack is empty or contains a left parenthesis on top,push the incoming operator on to the stack
+
+3. if the incoming symbol is '(' push it onto the stack
+4. if the incoming symbol is ')' pop the stack and print the operators untill left parenthesis is find
+5. if incoming symbol has higher precedence than the top of the stack ,push on to the stack
+6. if the incoming symbol has lower precedence than the top of the stack ,pop and print the top.Then  test the 
+// incoming operator against the new top of the stack
+7. if incoming operator has equal precedence with the top of the stack use associativity rule
+8.At the end of the expression , pop and print all operator of stack
+
+*** Associavity rule 
+1 .L to R then pop and print the top of the stack and then push the incoming operator
+2. R to L then push the incoming operator
+
+
+*/
+
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class Stack{
+    ///properties
+    public:
+        int *arr;
+        int top;
+        int size;
+    ///constructor
+    Stack(int size)
+    {
+        this->size=size;
+        arr=new int(size);
+        top=-1;
+    }
+    void push(int element)
+    {
+        if(size-top>1)
+        {
+            
+            top++;
+            arr[top]=element;
+        }
+        else{
+            cout<<"Stack overflow"<<endl;
+        }
+    }
+    void pop()
+    {
+        if(top>=0)
+        {
+            top--;
+        }
+        else{
+            cout<<"Stack underflow"<<endl;
+        }
+    }
+    int  peek()
+    {
+        if(top>=0 && top<size)
+        {
+            return arr[top];
+        }
+        else{
+            cout<<"Stack is empty"<<endl;
+            return -1;
+        }
+    }
+    bool isEmpty()
+    {
+        if(top==-1)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
+
+int precedence(char c)
+{
+    if(c=='^')
+    {
+        return 3;
+    }
+    else if(c=='/'||c=='*')
+    {
+        return 2;
+    }
+    else if(c=='+'||c=='-')
+    {
+        return 1;
+    }
+    else {
+        return -1;
+    }
+}
+
+void infixToPostfix(string s,Stack st)
+{
+    string result;
+    for(int i=0;i<s.length();i++)
+    {
+        char c=s[i];
+
+
+        if((c>='a'&& c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9'))
+        {
+            result+=c;
+        }
+        else if(c=='(')
+        {
+            st.push('(');
+        }
+        else if(c==')')
+        {
+            while(st.peek()!='(')
+            {
+                result+=st.peek();
+                st.pop();
+            }
+            st.pop();
+        }
+        else{
+            while(!st.isEmpty()&& precedence(s[i])<=precedence(st.peek()))
+            {
+                result+=st.peek();
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+    while(!st.isEmpty())
+    {
+        result+=st.peek();
+        st.pop();
+    }
+    cout<<result<<endl;
+}
+
+int main()
+{
+    Stack st(10000);
+
+    string s;
+    cin>>s;
+
+    infixToPostfix(s,st);
+
+    return 0;
+
+}
