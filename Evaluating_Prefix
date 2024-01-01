@@ -1,0 +1,64 @@
+////start from the right to left
+//for each char in prefix expression
+/// if operand then push it in the stack
+//// else if operator is there then pop 2 elemelnts from the stack 
+// op1:top elemet 
+//op2: next to top element
+/// result=op1 operator op2
+//push result on to the stack
+
+/// return the stack top
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+bool isOperand(char c)
+{
+    return isdigit(c);
+}
+
+double evaluatePrefix(string s)
+{
+    stack<double>st;
+    for(int i=s.size()-1;i>=0;i--)
+    {
+        if(isOperand(s[i]))
+        {
+            st.push(s[i]-'0');
+        }
+        else{
+            double op1=st.top();
+            st.pop();
+            double op2=st.top();
+            st.pop();
+
+            switch(s[i])
+            {
+                case '+':
+                    st.push(op1 + op2);
+                    break;
+                case '-':
+                    st.push(op1 - op2);
+                    break;
+                case '*':
+                    st.push(op1 * op2);
+                    break;
+                case '/':
+                    st.push(op1 / op2);
+                    break;
+            }
+        }
+    }
+
+    return st.top();
+}
+
+int main()
+{
+    string s;
+    cin>>s;
+
+    cout<<evaluatePrefix(s)<<endl;
+    return 0;
+}
