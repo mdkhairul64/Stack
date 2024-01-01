@@ -1,0 +1,163 @@
+//// when the precedence is same just only difference is that if the associativity is L to R 
+//then just push element which is differ from the infix to porstfix
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class Stack{
+    ///properties
+    public:
+        int *arr;
+        int top;
+        int size;
+    ///constructor
+    Stack(int size)
+    {
+        this->size=size;
+        arr=new int(size);
+        top=-1;
+    }
+    void push(int element)
+    {
+        if(size-top>1)
+        {
+            
+            top++;
+            arr[top]=element;
+        }
+        else{
+            cout<<"Stack overflow"<<endl;
+        }
+    }
+    void pop()
+    {
+        if(top>=0)
+        {
+            top--;
+        }
+        else{
+            cout<<"Stack underflow"<<endl;
+        }
+    }
+    int  peek()
+    {
+        if(top>=0 && top<size)
+        {
+            return arr[top];
+        }
+        else{
+            cout<<"Stack is empty"<<endl;
+            return -1;
+        }
+    }
+    bool isEmpty()
+    {
+        if(top==-1)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
+
+int precedence(char c)
+{
+    if(c=='^')
+    {
+        return 3;
+    }
+    else if(c=='/'||c=='*')
+    {
+        return 2;
+    }
+    else if(c=='+'||c=='-')
+    {
+        return 1;
+    }
+    else {
+        return -1;
+    }
+}
+
+string infixToPostfix(string s,Stack st)
+{
+    string result;
+    for(int i=0;i<s.length();i++)
+    {
+        char c=s[i];
+
+
+        if((c>='a'&& c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9'))
+        {
+            result+=c;
+        }
+        else if(c=='(')
+        {
+            st.push('(');
+        }
+        else if(c==')')
+        {
+            while(st.peek()!='(')
+            {
+                result+=st.peek();
+                st.pop();
+            }
+            st.pop();
+        }
+        else{
+            while(!st.isEmpty()&& precedence(s[i])<=precedence(st.peek()))
+            {
+                result+=st.peek();
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+    while(!st.isEmpty())
+    {
+        result+=st.peek();
+        st.pop();
+    }
+    cout<<result<<endl;
+}
+
+string  infixToPrefix(string s,Stack st)
+{
+    int len=s.size();
+
+    reverse(s.begin(),s.end());
+
+    //replace (with ) and vice versa
+    for(int i=0;i<len;i++)
+    {
+        if(s[i]=='(')
+        {
+            s[i]=')';
+        }
+        else if(s[i]==')')
+        {
+            s[i]='(';
+        }  
+    }
+    string prefix=infixToPostfix(s,st);
+
+    reverse(prefix.begin(),prefix.end());
+
+
+    return prefix;
+}
+
+int main()
+{
+    Stack st(10000);
+
+    string s;
+    cin>>s;
+
+    cout<<infixToPrefix(s,st)<<endl;
+
+    return 0;
+
+}
